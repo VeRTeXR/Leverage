@@ -1,13 +1,10 @@
-﻿using System.Diagnostics;
-using UnityEditor;
+﻿using System.Security.Cryptography;
 using UnityEngine;
-using Debug = UnityEngine.Debug;
 
 public class PlayerController : MonoBehaviour
 {
 	private float _walkSpeed;
 	private int _faceDirection;
-	private float _walkCountdownInterval;
 	private float _currentWalkCountdownInterval;
 	private float _keyDownInterval;
 	private float _currentKeyDownInterval;
@@ -16,11 +13,9 @@ public class PlayerController : MonoBehaviour
 	
 	void Start ()
 	{
-		_walkSpeed = 10f;
-		_walkCountdownInterval = 1f;
+		_walkSpeed = 3f * Mathf.Clamp(GameController.Instance.CurrentLevel, 1, 99);
 		_keyDownInterval = 0.25f;
 		_currentKeyDownInterval = _keyDownInterval;
-		_hasPlayerInputBeenProcessed = false;
 	}
 	
 	void Update ()
@@ -30,7 +25,6 @@ public class PlayerController : MonoBehaviour
 		
 		if (_hasPlayerInputBeenProcessed)
 			HandlePlayerInputCooldownInterval();
-		
 	}
 
 	private void HandlePlayerInputCooldownInterval()
@@ -48,7 +42,7 @@ public class PlayerController : MonoBehaviour
 		transform.localPosition = transform.localPosition + transform.right * _walkSpeed * Time.deltaTime;
 	}
 
-	void ProcessingInput()
+	private void ProcessingInput()
 	{ 
 		if(_hasPlayerInputBeenProcessed) return;
 		
@@ -62,6 +56,17 @@ public class PlayerController : MonoBehaviour
 			transform.Rotate(-Vector3.forward * 90);
 			_hasPlayerInputBeenProcessed = true;
 		}
+	}
 
-	} 
+	private void OnCollisionEnter(Collision c)
+	{
+		if (c.gameObject.CompareTag("Level"))
+			transform.Rotate(Vector3.forward * 90);
+
+		if (c.gameObject.CompareTag("Exit"))
+		{
+			GameController.Instance.LevelComplete();
+		}
+		
+	}
 }

@@ -1,5 +1,6 @@
 ﻿using System.Resources;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class  GameController : MonoBehaviour
@@ -12,23 +13,28 @@ public class  GameController : MonoBehaviour
 	private bool _playerCompletedTheLevel;
 	private int _highScore;
 	private int _currentSessionScore;
-	private int _currentLevel;
 	private int _lastLevelReached;
 
-	public static GameController Instance = null; 
+	private static GameController _instance;
+	public static GameController Instance
+	{
+		get { return _instance; }
+	}
 	
 	void Awake()
 	{
-		if (Instance == null)
-		{
-			Instance = this;
-		}
+		if (_instance == null)
+			_instance = this;
+		else 
+			Destroy(this);
+
+		CurrentLevel = PlayerPrefs.GetInt("CurrentLevel");
 		
 		InitializeGameObject(); 
 		InitializeTimer();
 		InitializePlayerValue();
 	}
-
+	public int CurrentLevel { get; set; }
 	private void InitializeGameObject()
 	{
 		if(Timer == null)
@@ -37,7 +43,6 @@ public class  GameController : MonoBehaviour
 		if (Player == null)
 			Player = GameObject.FindWithTag("Player");	
 	}
-	
 
 	private void InitializeTimer()
 	{
@@ -47,9 +52,9 @@ public class  GameController : MonoBehaviour
 
 	private void InitializePlayerValue()
 	{
-		_currentLevel = 0;
-		_lastLevelReached = 0;
-		_currentSessionScore = 0; 
+//		CurrentLevel = 0;
+//		_lastLevelReached = 0;
+//		_currentSessionScore = 0; 
 	}
 
 	void Update ()
@@ -60,21 +65,35 @@ public class  GameController : MonoBehaviour
 		if (CurrentTimer <= 0)
 			GameOver();
 
-		if (_playerCompletedTheLevel)
-		{
-			LevelComplete();
-			Debug.LogError("increment level do shit");
-		} 
+//		if (_playerCompletedTheLevel)
+//		{
+//			LevelComplete();
+//			Debug.LogError("increment level do shit");
+//		} 
 	}
 
-	private void LevelComplete()
+	public void LevelComplete()
 	{
-		_currentLevel++;
+		CurrentLevel++;
+		PlayerPrefs.SetInt("CurrentLevel", CurrentLevel);
+		Debug.LogError(CurrentLevel);
+		RestartLevel();
+	}
+
+	private void RestartLevel()
+	{
+		SceneManager.LoadScene(SceneManager.GetActiveScene().name);
 	}
 
 	private void GameOver()
 	{
 		Debug.LogError("do something on game over");
+		RestartLevel();
 		CurrentTimer = MaxTimer;
+	}
+
+	private void OnApplicationQuit()
+	{
+		PlayerPrefs.DeleteKey("CurrentLevel");
 	}
 }
