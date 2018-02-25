@@ -1,4 +1,4 @@
-﻿using NUnit.Framework;
+﻿using System.Resources;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -10,19 +10,46 @@ public class  GameController : MonoBehaviour
 	public float MaxTimer;
 	public float CurrentTimer;
 	private bool _playerCompletedTheLevel;
+	private int _highScore;
+	private int _currentSessionScore;
+	private int _currentLevel;
+	private int _lastLevelReached;
+
+	public static GameController Instance = null; 
 	
 	void Awake()
 	{
-		if(Timer == null)
-			Timer = GameObject.Find("Timer");
-
+		if (Instance == null)
+		{
+			Instance = this;
+		}
+		
+		InitializeGameObject(); 
 		InitializeTimer();
+		InitializePlayerValue();
 	}
+
+	private void InitializeGameObject()
+	{
+		if(Timer == null)
+			Timer = GameObject.FindWithTag("Timer");
+
+		if (Player == null)
+			Player = GameObject.FindWithTag("Player");	
+	}
+	
 
 	private void InitializeTimer()
 	{
 		MaxTimer = 10;
 		CurrentTimer = MaxTimer;
+	}
+
+	private void InitializePlayerValue()
+	{
+		_currentLevel = 0;
+		_lastLevelReached = 0;
+		_currentSessionScore = 0; 
 	}
 
 	void Update ()
@@ -42,7 +69,7 @@ public class  GameController : MonoBehaviour
 
 	private void LevelComplete()
 	{
-		
+		_currentLevel++;
 	}
 
 	private void GameOver()
