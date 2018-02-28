@@ -1,5 +1,4 @@
-﻿using System.Security.Cryptography;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
@@ -25,6 +24,11 @@ public class PlayerController : MonoBehaviour
 		
 		if (_hasPlayerInputBeenProcessed)
 			HandlePlayerInputCooldownInterval();
+
+		if (Input.GetKey(KeyCode.Space))
+		{
+			GameController.Instance.ResetPlayerPref();
+		}
 	}
 
 	private void HandlePlayerInputCooldownInterval()

@@ -1,5 +1,4 @@
-﻿using System.Resources;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
@@ -77,6 +76,7 @@ public class  GameController : MonoBehaviour
 		CurrentLevel++;
 		PlayerPrefs.SetInt("CurrentLevel", CurrentLevel);
 		Debug.LogError(CurrentLevel);
+		PlayerPrefs.SetInt("LastLevelReached",CurrentLevel);
 		RestartLevel();
 	}
 
@@ -92,8 +92,13 @@ public class  GameController : MonoBehaviour
 		CurrentTimer = MaxTimer;
 	}
 
-	private void OnApplicationQuit()
+	public void ResetPlayerPref()
 	{
 		PlayerPrefs.DeleteKey("CurrentLevel");
+	}
+
+	private void OnApplicationQuit()
+	{
+		ResetPlayerPref();
 	}
 }
