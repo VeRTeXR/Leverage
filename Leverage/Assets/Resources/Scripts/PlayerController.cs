@@ -15,6 +15,7 @@ public class PlayerController : MonoBehaviour
 		_walkSpeed = 3f * Mathf.Clamp(GameController.Instance.CurrentLevel, 1, 99);
 		_keyDownInterval = 0.25f;
 		_currentKeyDownInterval = _keyDownInterval;
+		
 	}
 	
 	void Update ()
